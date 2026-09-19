@@ -1,0 +1,7 @@
+[env]
+# This WSLg environment sets WAYLAND_DISPLAY, which makes winit try the
+# Wayland backend first. Combined with the software (llvmpipe) renderer
+# used here, that backend crashes on startup with an "Io error: Broken
+# pipe". winit treats an empty WAYLAND_DISPLAY the same as unset, so
+# clearing it forces the X11 backend, which works.
+WAYLAND_DISPLAY = { value = "", force = true }
