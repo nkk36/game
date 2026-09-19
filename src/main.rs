@@ -26,6 +26,12 @@ fn main() {
             primary_window: Some(Window {
                 title: "The Golden (Water) Gun".to_string(),
                 resolution: bevy::window::WindowResolution::new(960, 640),
+                // In a browser, fill whatever element the canvas is embedded
+                // in (e.g. itch.io's HTML5 embed frame) instead of a fixed
+                // native window size.
+                canvas: Some("#bevy".to_string()),
+                fit_canvas_to_parent: true,
+                prevent_default_event_handling: true,
                 ..default()
             }),
             ..default()

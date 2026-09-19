@@ -4,10 +4,20 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = "0.19.1"
+# This is a flat-colored 2D game with no 3D content and no sound, so the
+# default "2d + 3d + ui + audio" feature bundle is disabled in favor of just
+# what's used - the 3D renderer/GLTF loader/lighting/audio stack alone
+# accounted for the bulk of an otherwise ~110MB wasm build.
+bevy = { version = "0.19.1", default-features = false, features = ["2d", "ui"] }
 
 [profile.dev]
 opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+strip = true

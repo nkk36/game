@@ -1,1 +1,8 @@
 /target
+
+# Generated wasm-bindgen output and the itch.io upload zip - rebuild with
+# `cargo build --release --target wasm32-unknown-unknown` + `wasm-bindgen`.
+# Only web/index.html is hand-written and worth tracking.
+/web/*.wasm
+/web/*.js
+/web/*.zip
