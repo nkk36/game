@@ -1,3 +1,4 @@
+use bevy::image::{TextureAtlas, TextureAtlasLayout};
 use bevy::prelude::*;
 
 use crate::collision::is_move_blocked;
@@ -15,15 +16,47 @@ pub struct Player;
 #[derive(Component)]
 pub struct FacingIndicator;
 
-pub fn spawn_player_system(mut commands: Commands) {
+/// Idle.png is a single row of 6 128x128 frames (5 near-identical poses
+/// plus one blink), looped continuously regardless of movement state.
+const IDLE_FRAME_SIZE: UVec2 = UVec2::new(128, 128);
+const IDLE_FRAME_COUNT: u32 = 6;
+const IDLE_FRAME_SECONDS: f32 = 0.15;
+
+#[derive(Component)]
+pub struct AnimationIndices {
+    first: usize,
+    last: usize,
+}
+
+#[derive(Component)]
+pub struct AnimationTimer(Timer);
+
+pub fn spawn_player_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+) {
     let world = OUTDOOR_SPAWN.to_world();
+    let texture = asset_server.load("Idle.png");
+    let layout = atlas_layouts.add(TextureAtlasLayout::from_grid(
+        IDLE_FRAME_SIZE,
+        IDLE_FRAME_COUNT,
+        1,
+        None,
+        None,
+    ));
     commands
         .spawn((
-            Sprite::from_color(Color::srgb(0.2, 0.45, 0.9), Vec2::splat(TILE_SIZE * 0.9)),
+            Sprite {
+                custom_size: Some(Vec2::splat(TILE_SIZE * 0.9)),
+                ..Sprite::from_atlas_image(texture, TextureAtlas { layout, index: 0 })
+            },
             Transform::from_xyz(world.x, world.y, 3.0),
             OUTDOOR_SPAWN,
             Facing { dir: OUTDOOR_SPAWN_FACING },
             Player,
+            AnimationIndices { first: 0, last: (IDLE_FRAME_COUNT - 1) as usize },
+            AnimationTimer(Timer::from_seconds(IDLE_FRAME_SECONDS, TimerMode::Repeating)),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -33,7 +66,14 @@ pub fn spawn_player_system(mut commands: Commands) {
             ));
         });
 
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        // Zoom in: scale < 1.0 makes everything render larger on screen (i.e. scale = 0.5 = 2x zoom).
+        Projection::Orthographic(OrthographicProjection {
+            scale: 0.4,
+            ..OrthographicProjection::default_2d()
+        }),
+    ));
 }
 
 /// Keeps the facing indicator glued to whichever side of the player they're
@@ -50,6 +90,22 @@ pub fn update_facing_indicator_system(
         if let Ok(mut transform) = indicator_q.get_mut(child) {
             transform.translation.x = dx as f32 * TILE_SIZE * 0.38;
             transform.translation.y = dy as f32 * TILE_SIZE * 0.38;
+        }
+    }
+}
+
+/// Loops the player's sprite through its idle animation frames.
+pub fn player_animation_system(
+    time: Res<Time>,
+    mut player_q: Query<(&AnimationIndices, &mut AnimationTimer, &mut Sprite), With<Player>>,
+) {
+    let Ok((indices, mut timer, mut sprite)) = player_q.single_mut() else {
+        return;
+    };
+    timer.0.tick(time.delta());
+    if timer.0.just_finished() {
+        if let Some(atlas) = &mut sprite.texture_atlas {
+            atlas.index = if atlas.index >= indices.last { indices.first } else { atlas.index + 1 };
         }
     }
 }
