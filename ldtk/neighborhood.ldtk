@@ -1,0 +1,1972 @@
+{
+	"__header__": {
+		"fileType": "LDtk Project JSON",
+		"app": "LDtk",
+		"doc": "https://ldtk.io/json",
+		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
+		"appAuthor": "Sebastien 'deepnight' Benard",
+		"appVersion": "1.5.3",
+		"url": "https://ldtk.io"
+	},
+	"iid": "cee4faf8-a5ef-4525-876b-d77cc2836e38",
+	"jsonVersion": "1.5.3",
+	"appBuildId": 473703,
+	"nextUid": 21,
+	"identifierStyle": "Free",
+	"toc": [],
+	"worldLayout": "Free",
+	"worldGridWidth": 256,
+	"worldGridHeight": 256,
+	"defaultLevelWidth": 512,
+	"defaultLevelHeight": 512,
+	"defaultPivotX": 0,
+	"defaultPivotY": 0,
+	"defaultGridSize": 32,
+	"defaultEntityWidth": 32,
+	"defaultEntityHeight": 32,
+	"bgColor": "#40465B",
+	"defaultLevelBgColor": "#696A79",
+	"minifyJson": false,
+	"externalLevels": false,
+	"exportTiled": false,
+	"simplifiedExport": false,
+	"imageExportMode": "None",
+	"exportLevelBg": true,
+	"pngFilePattern": null,
+	"backupOnSave": false,
+	"backupLimit": 10,
+	"backupRelPath": null,
+	"levelNamePattern": "Level_%idx",
+	"tutorialDesc": null,
+	"customCommands": [],
+	"flags": [],
+	"defs": {
+		"layers": [
+			{
+				"__type": "Entities",
+				"identifier": "Entities",
+				"type": "Entities",
+				"uid": 17,
+				"doc": null,
+				"uiColor": null,
+				"gridSize": 32,
+				"guideGridWid": 0,
+				"guideGridHei": 0,
+				"displayOpacity": 1,
+				"inactiveOpacity": 1,
+				"hideInList": false,
+				"hideFieldsWhenInactive": false,
+				"canSelectWhenInactive": true,
+				"renderInWorldView": true,
+				"pxOffsetX": 0,
+				"pxOffsetY": 0,
+				"parallaxFactorX": 0,
+				"parallaxFactorY": 0,
+				"parallaxScaling": true,
+				"requiredTags": [],
+				"excludedTags": [],
+				"autoTilesKilledByOtherLayerUid": null,
+				"uiFilterTags": [],
+				"useAsyncRender": false,
+				"intGridValues": [],
+				"intGridValuesGroups": [],
+				"autoRuleGroups": [],
+				"autoSourceLayerDefUid": null,
+				"tilesetDefUid": null,
+				"tilePivotX": 0,
+				"tilePivotY": 0,
+				"biomeFieldUid": null
+			},
+			{
+				"__type": "IntGrid",
+				"identifier": "Terrain",
+				"type": "IntGrid",
+				"uid": 18,
+				"doc": null,
+				"uiColor": null,
+				"gridSize": 32,
+				"guideGridWid": 0,
+				"guideGridHei": 0,
+				"displayOpacity": 1,
+				"inactiveOpacity": 1,
+				"hideInList": false,
+				"hideFieldsWhenInactive": false,
+				"canSelectWhenInactive": true,
+				"renderInWorldView": true,
+				"pxOffsetX": 0,
+				"pxOffsetY": 0,
+				"parallaxFactorX": 0,
+				"parallaxFactorY": 0,
+				"parallaxScaling": true,
+				"requiredTags": [],
+				"excludedTags": [],
+				"autoTilesKilledByOtherLayerUid": null,
+				"uiFilterTags": [],
+				"useAsyncRender": false,
+				"intGridValues": [
+					{
+						"value": 1,
+						"identifier": "Grass",
+						"color": "#4C8C40",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 2,
+						"identifier": "Path",
+						"color": "#BFB899",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 3,
+						"identifier": "HouseWall",
+						"color": "#8C5940",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 4,
+						"identifier": "DoorClosed",
+						"color": "#593826",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 5,
+						"identifier": "DoorBen",
+						"color": "#BF9926",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 6,
+						"identifier": "SignPost",
+						"color": "#998059",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 7,
+						"identifier": "Floor",
+						"color": "#CCAD80",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 8,
+						"identifier": "Wall",
+						"color": "#736B66",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 9,
+						"identifier": "ExitDoor",
+						"color": "#BF9926",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 10,
+						"identifier": "FurnitureCouch",
+						"color": "#994040",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 11,
+						"identifier": "FurnitureTv",
+						"color": "#1A1A1A",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 12,
+						"identifier": "FurnitureTable",
+						"color": "#805933",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 13,
+						"identifier": "FurnitureCounter",
+						"color": "#B2B2BF",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 14,
+						"identifier": "FurnitureBed",
+						"color": "#668CCC",
+						"tile": null,
+						"groupUid": 0
+					},
+					{
+						"value": 15,
+						"identifier": "FurnitureBedGun",
+						"color": "#668CCC",
+						"tile": null,
+						"groupUid": 0
+					}
+				],
+				"intGridValuesGroups": [],
+				"autoRuleGroups": [],
+				"autoSourceLayerDefUid": null,
+				"tilesetDefUid": null,
+				"tilePivotX": 0,
+				"tilePivotY": 0,
+				"biomeFieldUid": null
+			}
+		],
+		"entities": [
+			{
+				"identifier": "Npc",
+				"uid": 7,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#E0A030",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": [
+					{
+						"identifier": "npc_id",
+						"doc": null,
+						"__type": "LocalEnum.NpcId",
+						"uid": 5,
+						"type": "F_Enum(1)",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					},
+					{
+						"identifier": "facing",
+						"doc": null,
+						"__type": "LocalEnum.Direction",
+						"uid": 6,
+						"type": "F_Enum(2)",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					}
+				]
+			},
+			{
+				"identifier": "Door",
+				"uid": 9,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#F0D040",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": [
+					{
+						"identifier": "target",
+						"doc": null,
+						"__type": "LocalEnum.DoorTarget",
+						"uid": 8,
+						"type": "F_Enum(3)",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					}
+				]
+			},
+			{
+				"identifier": "Sign",
+				"uid": 11,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#FFFFFF",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": [
+					{
+						"identifier": "text",
+						"doc": null,
+						"__type": "String",
+						"uid": 10,
+						"type": "F_String",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					}
+				]
+			},
+			{
+				"identifier": "SpawnPoint",
+				"uid": 14,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#40C0F0",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": [
+					{
+						"identifier": "id",
+						"doc": null,
+						"__type": "LocalEnum.SpawnId",
+						"uid": 12,
+						"type": "F_Enum(4)",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					},
+					{
+						"identifier": "facing",
+						"doc": null,
+						"__type": "LocalEnum.Direction",
+						"uid": 13,
+						"type": "F_Enum(2)",
+						"isArray": false,
+						"canBeNull": false,
+						"arrayMinLength": null,
+						"arrayMaxLength": null,
+						"editorDisplayMode": "ValueOnly",
+						"editorDisplayScale": 1,
+						"editorDisplayPos": "Above",
+						"editorLinkStyle": "StraightArrow",
+						"editorDisplayColor": null,
+						"editorAlwaysShow": false,
+						"editorShowInWorld": true,
+						"editorCutLongValues": true,
+						"editorTextSuffix": null,
+						"editorTextPrefix": null,
+						"useForSmartColor": false,
+						"exportToToc": false,
+						"searchable": false,
+						"min": null,
+						"max": null,
+						"regex": null,
+						"acceptFileTypes": null,
+						"defaultOverride": null,
+						"textLanguageMode": null,
+						"symmetricalRef": false,
+						"autoChainRef": true,
+						"allowOutOfLevelRef": true,
+						"allowedRefs": "OnlySame",
+						"allowedRefsEntityUid": null,
+						"allowedRefTags": [],
+						"tilesetUid": null
+					}
+				]
+			},
+			{
+				"identifier": "GunSpot",
+				"uid": 15,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#FFD91A",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": []
+			},
+			{
+				"identifier": "AmbushEntry",
+				"uid": 16,
+				"tags": [],
+				"exportToToc": false,
+				"allowOutOfBounds": false,
+				"doc": null,
+				"width": 32,
+				"height": 32,
+				"resizableX": false,
+				"resizableY": false,
+				"minWidth": null,
+				"maxWidth": null,
+				"minHeight": null,
+				"maxHeight": null,
+				"keepAspectRatio": false,
+				"tileOpacity": 1,
+				"fillOpacity": 0.3,
+				"lineOpacity": 1,
+				"hollow": false,
+				"color": "#E04040",
+				"renderMode": "Rectangle",
+				"showName": true,
+				"tilesetId": null,
+				"tileRenderMode": "FitInside",
+				"tileRect": null,
+				"uiTileRect": null,
+				"nineSliceBorders": [],
+				"maxCount": 0,
+				"limitScope": "PerLevel",
+				"limitBehavior": "MoveLastOne",
+				"pivotX": 0,
+				"pivotY": 0,
+				"fieldDefs": []
+			}
+		],
+		"tilesets": [],
+		"enums": [
+			{
+				"uid": 1,
+				"identifier": "NpcId",
+				"values": [
+					{
+						"id": "Mom",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "Dad",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "OlderBrother",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "YoungerBrother",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "Ben",
+						"tileRect": null,
+						"color": 0
+					}
+				],
+				"iconTilesetUid": null,
+				"externalRelPath": null,
+				"externalFileChecksum": null,
+				"tags": []
+			},
+			{
+				"uid": 2,
+				"identifier": "Direction",
+				"values": [
+					{
+						"id": "Up",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "Down",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "Left",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "Right",
+						"tileRect": null,
+						"color": 0
+					}
+				],
+				"iconTilesetUid": null,
+				"externalRelPath": null,
+				"externalFileChecksum": null,
+				"tags": []
+			},
+			{
+				"uid": 3,
+				"identifier": "DoorTarget",
+				"values": [
+					{
+						"id": "EnterHouse",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "ExitHouse",
+						"tileRect": null,
+						"color": 0
+					}
+				],
+				"iconTilesetUid": null,
+				"externalRelPath": null,
+				"externalFileChecksum": null,
+				"tags": []
+			},
+			{
+				"uid": 4,
+				"identifier": "SpawnId",
+				"values": [
+					{
+						"id": "OutdoorSpawn",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "OutdoorReturn",
+						"tileRect": null,
+						"color": 0
+					},
+					{
+						"id": "InteriorSpawn",
+						"tileRect": null,
+						"color": 0
+					}
+				],
+				"iconTilesetUid": null,
+				"externalRelPath": null,
+				"externalFileChecksum": null,
+				"tags": []
+			}
+		],
+		"externalEnums": [],
+		"levelFields": []
+	},
+	"levels": [
+		{
+			"identifier": "Outdoor",
+			"iid": "9be3538f-0def-49de-bc2c-f0c66120d8ae",
+			"uid": 19,
+			"worldX": 0,
+			"worldY": 0,
+			"worldDepth": 0,
+			"pxWid": 544,
+			"pxHei": 224,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#ADADB5",
+			"__bgPos": null,
+			"externalRelPath": null,
+			"fieldInstances": [],
+			"layerInstances": [
+				{
+					"__identifier": "Entities",
+					"__type": "Entities",
+					"__cWid": 17,
+					"__cHei": 7,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "34d65d07-365c-4759-a7b6-c6a80f4f1ef7",
+					"levelId": 19,
+					"layerDefUid": 17,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 1000017,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "Door",
+							"__grid": [
+								13,
+								2
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#F0D040",
+							"__worldX": 416,
+							"__worldY": 64,
+							"iid": "e6d07ed8-c7c0-4e5f-883f-0c5405f80efc",
+							"width": 32,
+							"height": 32,
+							"defUid": 9,
+							"px": [
+								416,
+								64
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "target",
+									"__type": "LocalEnum.DoorTarget",
+									"__value": "EnterHouse",
+									"__tile": null,
+									"defUid": 8,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"EnterHouse"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Sign",
+							"__grid": [
+								3,
+								5
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#FFFFFF",
+							"__worldX": 96,
+							"__worldY": 160,
+							"iid": "a9039cc1-aca5-4adc-8b54-0d96530e27d2",
+							"width": 32,
+							"height": 32,
+							"defUid": 11,
+							"px": [
+								96,
+								160
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "text",
+									"__type": "String",
+									"__value": "A weathered sign: \"The Johnsons\"",
+									"__tile": null,
+									"defUid": 10,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"A weathered sign: \"The Johnsons\""
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Sign",
+							"__grid": [
+								8,
+								5
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#FFFFFF",
+							"__worldX": 256,
+							"__worldY": 160,
+							"iid": "d39ff2e5-6a2f-4eb5-ae39-26872ab560f6",
+							"width": 32,
+							"height": 32,
+							"defUid": 11,
+							"px": [
+								256,
+								160
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "text",
+									"__type": "String",
+									"__value": "A weathered sign: \"The Millers\"",
+									"__tile": null,
+									"defUid": 10,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"A weathered sign: \"The Millers\""
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "SpawnPoint",
+							"__grid": [
+								1,
+								4
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#40C0F0",
+							"__worldX": 32,
+							"__worldY": 128,
+							"iid": "7b9402bd-b7d2-442b-91af-e351e4783093",
+							"width": 32,
+							"height": 32,
+							"defUid": 14,
+							"px": [
+								32,
+								128
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "id",
+									"__type": "LocalEnum.SpawnId",
+									"__value": "OutdoorSpawn",
+									"__tile": null,
+									"defUid": 12,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"OutdoorSpawn"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Up",
+									"__tile": null,
+									"defUid": 13,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Up"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "SpawnPoint",
+							"__grid": [
+								13,
+								3
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#40C0F0",
+							"__worldX": 416,
+							"__worldY": 96,
+							"iid": "d50eff6f-c514-41bf-a3b0-8e563c361e71",
+							"width": 32,
+							"height": 32,
+							"defUid": 14,
+							"px": [
+								416,
+								96
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "id",
+									"__type": "LocalEnum.SpawnId",
+									"__value": "OutdoorReturn",
+									"__tile": null,
+									"defUid": 12,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"OutdoorReturn"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Down",
+									"__tile": null,
+									"defUid": 13,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Down"
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"__identifier": "Terrain",
+					"__type": "IntGrid",
+					"__cWid": 17,
+					"__cHei": 7,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "6278d1f1-9fa7-46c0-9ecd-2a41d96c51f6",
+					"levelId": 19,
+					"layerDefUid": 18,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						3,
+						3,
+						3,
+						1,
+						1,
+						3,
+						3,
+						3,
+						1,
+						1,
+						3,
+						3,
+						3,
+						1,
+						1,
+						1,
+						1,
+						3,
+						4,
+						3,
+						1,
+						1,
+						3,
+						4,
+						3,
+						1,
+						1,
+						3,
+						5,
+						3,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						1,
+						1,
+						1,
+						6,
+						1,
+						1,
+						1,
+						1,
+						6,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
+						1
+					],
+					"autoLayerTiles": [],
+					"seed": 1000018,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				}
+			],
+			"__neighbours": []
+		},
+		{
+			"identifier": "HouseInterior",
+			"iid": "7610eb22-fbff-47ee-8f43-9bc7b5898401",
+			"uid": 20,
+			"worldX": 608,
+			"worldY": 0,
+			"worldDepth": 0,
+			"pxWid": 672,
+			"pxHei": 480,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#ADADB5",
+			"__bgPos": null,
+			"externalRelPath": null,
+			"fieldInstances": [],
+			"layerInstances": [
+				{
+					"__identifier": "Entities",
+					"__type": "Entities",
+					"__cWid": 21,
+					"__cHei": 15,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "c8df40b5-c105-4a4c-a1a8-0eb80bce31db",
+					"levelId": 20,
+					"layerDefUid": 17,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 1000017,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "Door",
+							"__grid": [
+								10,
+								14
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#F0D040",
+							"__worldX": 928,
+							"__worldY": 448,
+							"iid": "c1b2545a-3981-4b37-9892-3a5adef2307d",
+							"width": 32,
+							"height": 32,
+							"defUid": 9,
+							"px": [
+								320,
+								448
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "target",
+									"__type": "LocalEnum.DoorTarget",
+									"__value": "ExitHouse",
+									"__tile": null,
+									"defUid": 8,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"ExitHouse"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "SpawnPoint",
+							"__grid": [
+								10,
+								13
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#40C0F0",
+							"__worldX": 928,
+							"__worldY": 416,
+							"iid": "cb06e66f-2a50-44bb-b4a2-d944cba08d61",
+							"width": 32,
+							"height": 32,
+							"defUid": 14,
+							"px": [
+								320,
+								416
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "id",
+									"__type": "LocalEnum.SpawnId",
+									"__value": "InteriorSpawn",
+									"__tile": null,
+									"defUid": 12,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"InteriorSpawn"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Up",
+									"__tile": null,
+									"defUid": 13,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Up"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Npc",
+							"__grid": [
+								5,
+								10
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#E0A030",
+							"__worldX": 768,
+							"__worldY": 320,
+							"iid": "2a859810-690e-4227-8e05-ffba8ed2b16c",
+							"width": 32,
+							"height": 32,
+							"defUid": 7,
+							"px": [
+								160,
+								320
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "npc_id",
+									"__type": "LocalEnum.NpcId",
+									"__value": "Mom",
+									"__tile": null,
+									"defUid": 5,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Mom"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Down",
+									"__tile": null,
+									"defUid": 6,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Down"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Npc",
+							"__grid": [
+								15,
+								10
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#E0A030",
+							"__worldX": 1088,
+							"__worldY": 320,
+							"iid": "ad136466-0c48-49fe-9ba0-4b2dabdd4a21",
+							"width": 32,
+							"height": 32,
+							"defUid": 7,
+							"px": [
+								480,
+								320
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "npc_id",
+									"__type": "LocalEnum.NpcId",
+									"__value": "Dad",
+									"__tile": null,
+									"defUid": 5,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Dad"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Down",
+									"__tile": null,
+									"defUid": 6,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Down"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Npc",
+							"__grid": [
+								3,
+								3
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#E0A030",
+							"__worldX": 704,
+							"__worldY": 96,
+							"iid": "f3ecc115-5642-47aa-9722-3c7ef54116be",
+							"width": 32,
+							"height": 32,
+							"defUid": 7,
+							"px": [
+								96,
+								96
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "npc_id",
+									"__type": "LocalEnum.NpcId",
+									"__value": "OlderBrother",
+									"__tile": null,
+									"defUid": 5,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"OlderBrother"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Down",
+									"__tile": null,
+									"defUid": 6,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Down"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "Npc",
+							"__grid": [
+								10,
+								3
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#E0A030",
+							"__worldX": 928,
+							"__worldY": 96,
+							"iid": "87759539-c166-44b5-93f0-8aff5c7a6788",
+							"width": 32,
+							"height": 32,
+							"defUid": 7,
+							"px": [
+								320,
+								96
+							],
+							"fieldInstances": [
+								{
+									"__identifier": "npc_id",
+									"__type": "LocalEnum.NpcId",
+									"__value": "YoungerBrother",
+									"__tile": null,
+									"defUid": 5,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"YoungerBrother"
+											]
+										}
+									]
+								},
+								{
+									"__identifier": "facing",
+									"__type": "LocalEnum.Direction",
+									"__value": "Down",
+									"__tile": null,
+									"defUid": 6,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": [
+												"Down"
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"__identifier": "GunSpot",
+							"__grid": [
+								17,
+								3
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#FFD91A",
+							"__worldX": 1152,
+							"__worldY": 96,
+							"iid": "db2ac33f-ceff-4fb2-9c85-6a4a82faa6b8",
+							"width": 32,
+							"height": 32,
+							"defUid": 15,
+							"px": [
+								544,
+								96
+							],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "AmbushEntry",
+							"__grid": [
+								19,
+								4
+							],
+							"__pivot": [
+								0,
+								0
+							],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#E04040",
+							"__worldX": 1216,
+							"__worldY": 128,
+							"iid": "513266bb-0e65-47a7-a963-0c9ee2de2855",
+							"width": 32,
+							"height": 32,
+							"defUid": 16,
+							"px": [
+								608,
+								128
+							],
+							"fieldInstances": []
+						}
+					]
+				},
+				{
+					"__identifier": "Terrain",
+					"__type": "IntGrid",
+					"__cWid": 21,
+					"__cHei": 15,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "c8525b61-8020-4dba-8b31-db952d29bef5",
+					"levelId": 20,
+					"layerDefUid": 18,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						14,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						14,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						15,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						7,
+						8,
+						8,
+						8,
+						8,
+						7,
+						8,
+						8,
+						8,
+						8,
+						7,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						11,
+						7,
+						7,
+						8,
+						7,
+						7,
+						12,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						10,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						13,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						7,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						9,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8,
+						8
+					],
+					"autoLayerTiles": [],
+					"seed": 1000018,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				}
+			],
+			"__neighbours": []
+		}
+	],
+	"worlds": [],
+	"dummyWorldIid": "ffc45135-e201-4e6f-9e7c-ecfeb8cf26e7"
+}
