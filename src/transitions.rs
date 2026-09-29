@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
-use crate::grid::{Direction, Facing, GridPos};
-use crate::interaction::{DoorTarget, Interactable, InteractionEvent};
+use crate::grid::{Facing, GridPos};
+use crate::interaction::{Interactable, InteractionEvent};
+use crate::ldtk::{CurrentLevel, DoorLink, GameMaps};
 use crate::player::{teleport_player, Player};
 use crate::states::{AppState, InputLock};
-use crate::tilemap::{INTERIOR_SPAWN, INTERIOR_SPAWN_FACING, OUTDOOR_RETURN_FACING, OUTDOOR_RETURN_POS};
 
 const FADE_SECONDS: f32 = 0.25;
 
@@ -20,7 +20,7 @@ pub struct FadeState {
     phase: FadePhase,
     timer: Timer,
     target_state: Option<AppState>,
-    target_player: Option<(GridPos, Direction)>,
+    target_player: Option<DoorLink>,
 }
 
 impl Default for FadeState {
@@ -35,7 +35,9 @@ impl Default for FadeState {
 }
 
 impl FadeState {
-    pub fn start(&mut self, target_state: AppState, target_player: Option<(GridPos, Direction)>) {
+    /// Fades out, switches to `target_state` and, if given, moves the player
+    /// to `target_player` (also making its level the [`CurrentLevel`]).
+    pub fn start(&mut self, target_state: AppState, target_player: Option<DoorLink>) {
         if self.phase != FadePhase::Idle {
             return;
         }
@@ -71,14 +73,13 @@ pub fn setup_fade_overlay(mut commands: Commands) {
 pub fn handle_scene_transition_interactions(
     mut events: MessageReader<InteractionEvent>,
     mut fade: ResMut<FadeState>,
+    maps: Res<GameMaps>,
 ) {
     for event in events.read() {
         match event.0 {
-            Interactable::Door(DoorTarget::EnterHouse) => {
-                fade.start(AppState::HouseInterior, Some((INTERIOR_SPAWN, INTERIOR_SPAWN_FACING)));
-            }
-            Interactable::Door(DoorTarget::ExitHouse) => {
-                fade.start(AppState::Outdoor, Some((OUTDOOR_RETURN_POS, OUTDOOR_RETURN_FACING)));
+            Interactable::Door(link) => {
+                let state = if maps.is_outdoor(link.level) { AppState::Outdoor } else { AppState::HouseInterior };
+                fade.start(state, Some(link));
             }
             Interactable::GunHidingSpot => {
                 fade.start(AppState::Cutscene, None);
@@ -96,6 +97,7 @@ pub fn fade_update_system(
     current_state: Res<State<AppState>>,
     mut input_lock: ResMut<InputLock>,
     mut player_q: Query<(&mut GridPos, &mut Facing, &mut Transform), With<Player>>,
+    mut current_level: ResMut<CurrentLevel>,
 ) {
     let Ok(mut background) = overlay_q.single_mut() else {
         return;
@@ -111,8 +113,9 @@ pub fn fade_update_system(
                 if let Some(target) = fade.target_state.take() {
                     next_state.set(target);
                 }
-                if let Some((pos, dir)) = fade.target_player.take() {
-                    teleport_player(&mut player_q, pos, dir);
+                if let Some(link) = fade.target_player.take() {
+                    current_level.0 = link.level;
+                    teleport_player(&mut player_q, link.pos, link.facing);
                 }
                 fade.phase = FadePhase::In;
                 fade.timer = Timer::from_seconds(FADE_SECONDS, TimerMode::Once);

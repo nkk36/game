@@ -1,11 +1,13 @@
+use bevy::camera::ScalingMode;
 use bevy::image::{TextureAtlas, TextureAtlasLayout};
 use bevy::prelude::*;
 
 use crate::collision::is_move_blocked;
 use crate::grid::{Direction, Facing, GridPos, MoveTween, TILE_SIZE};
+use crate::ldtk::{CurrentLevel, GameMaps};
 use crate::npc::Npc;
 use crate::states::InputLock;
-use crate::tilemap::{ActiveCollision, OUTDOOR_SPAWN, OUTDOOR_SPAWN_FACING};
+use crate::tilemap::ActiveCollision;
 
 #[derive(Component)]
 pub struct Player;
@@ -35,8 +37,10 @@ pub fn spawn_player_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+    maps: Res<GameMaps>,
 ) {
-    let world = OUTDOOR_SPAWN.to_world();
+    let (spawn_pos, spawn_facing) = maps.player_start;
+    let world = spawn_pos.to_world();
     let texture = asset_server.load("Idle.png");
     let layout = atlas_layouts.add(TextureAtlasLayout::from_grid(
         IDLE_FRAME_SIZE,
@@ -52,8 +56,8 @@ pub fn spawn_player_system(
                 ..Sprite::from_atlas_image(texture, TextureAtlas { layout, index: 0 })
             },
             Transform::from_xyz(world.x, world.y, 3.0),
-            OUTDOOR_SPAWN,
-            Facing { dir: OUTDOOR_SPAWN_FACING },
+            spawn_pos,
+            Facing { dir: spawn_facing },
             Player,
             AnimationIndices { first: 0, last: (IDLE_FRAME_COUNT - 1) as usize },
             AnimationTimer(Timer::from_seconds(IDLE_FRAME_SECONDS, TimerMode::Repeating)),
@@ -66,14 +70,8 @@ pub fn spawn_player_system(
             ));
         });
 
-    commands.spawn((
-        Camera2d,
-        // Zoom in: scale < 1.0 makes everything render larger on screen (i.e. scale = 0.5 = 2x zoom).
-        Projection::Orthographic(OrthographicProjection {
-            scale: 0.4,
-            ..OrthographicProjection::default_2d()
-        }),
-    ));
+    // Framed to the current level by `camera_fit_level_system`.
+    commands.spawn(Camera2d);
 }
 
 /// Keeps the facing indicator glued to whichever side of the player they're
@@ -169,16 +167,28 @@ pub fn teleport_player(
     }
 }
 
-pub fn camera_follow_system(
-    player_q: Query<&Transform, (With<Player>, Without<Camera2d>)>,
-    mut camera_q: Query<&mut Transform, With<Camera2d>>,
+/// Centers the camera on the current level and zooms so the whole level
+/// (plus a half-tile margin) is visible. `AutoMin` keeps it fitted as the
+/// window resizes, so this only needs to run when the level changes.
+pub fn camera_fit_level_system(
+    maps: Res<GameMaps>,
+    current_level: Res<CurrentLevel>,
+    mut camera_q: Query<(&mut Transform, &mut Projection), With<Camera2d>>,
 ) {
-    let Ok(player_t) = player_q.single() else {
+    if !current_level.is_changed() {
+        return;
+    }
+    let Ok((mut cam_t, mut projection)) = camera_q.single_mut() else {
         return;
     };
-    let Ok(mut cam_t) = camera_q.single_mut() else {
-        return;
-    };
-    cam_t.translation.x = player_t.translation.x;
-    cam_t.translation.y = player_t.translation.y;
+    let grid = &maps.levels[current_level.0].grid;
+    let (w, h) = (grid.width as f32, grid.height as f32);
+    // Tiles are centered on their grid position, so the level spans
+    // -TILE_SIZE/2 ..= (w - 0.5) * TILE_SIZE horizontally (same vertically).
+    cam_t.translation.x = (w - 1.0) * TILE_SIZE / 2.0;
+    cam_t.translation.y = (h - 1.0) * TILE_SIZE / 2.0;
+    *projection = Projection::Orthographic(OrthographicProjection {
+        scaling_mode: ScalingMode::AutoMin { min_width: (w + 1.0) * TILE_SIZE, min_height: (h + 1.0) * TILE_SIZE },
+        ..OrthographicProjection::default_2d()
+    });
 }

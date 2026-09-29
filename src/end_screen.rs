@@ -2,9 +2,9 @@ use bevy::prelude::*;
 
 use crate::cutscene::CutsceneState;
 use crate::dialogue::DialogueState;
+use crate::ldtk::{DoorLink, GameMaps};
 use crate::quest::QuestState;
 use crate::states::AppState;
-use crate::tilemap::{OUTDOOR_SPAWN, OUTDOOR_SPAWN_FACING};
 use crate::transitions::FadeState;
 
 #[derive(Component)]
@@ -68,6 +68,7 @@ pub fn restart_system(
     mut dialogue: ResMut<DialogueState>,
     mut cutscene: ResMut<CutsceneState>,
     mut fade: ResMut<FadeState>,
+    maps: Res<GameMaps>,
 ) {
     if !keys.just_pressed(KeyCode::KeyR) {
         return;
@@ -75,8 +76,6 @@ pub fn restart_system(
     *quest = QuestState::default();
     *dialogue = DialogueState::default();
     *cutscene = CutsceneState::default();
-    fade.start(
-        AppState::Outdoor,
-        Some((OUTDOOR_SPAWN, OUTDOOR_SPAWN_FACING)),
-    );
+    let (pos, facing) = maps.player_start;
+    fade.start(AppState::Outdoor, Some(DoorLink { level: maps.outdoor, pos, facing }));
 }

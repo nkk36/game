@@ -4,7 +4,8 @@ use crate::grid::{Direction, Facing, GridPos, MoveTween, TILE_SIZE};
 use crate::npc::{spawn_npc, NpcId};
 use crate::player::Player;
 use crate::states::{AppState, InputLock};
-use crate::tilemap::{GunPickupProp, InteriorEntity, BEN_AMBUSH_ENTRY_POS, GUN_SPOT_POS};
+use crate::ldtk::GameMaps;
+use crate::tilemap::{GunPickupProp, InteriorEntity};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum CutscenePhase {
@@ -32,10 +33,15 @@ pub(crate) struct BenActor;
 #[derive(Component)]
 struct SplashFx;
 
-pub fn start_cutscene_system(mut commands: Commands, mut cutscene: ResMut<CutsceneState>, mut input_lock: ResMut<InputLock>) {
+pub fn start_cutscene_system(
+    mut commands: Commands,
+    mut cutscene: ResMut<CutsceneState>,
+    mut input_lock: ResMut<InputLock>,
+    maps: Res<GameMaps>,
+) {
     input_lock.0 = true;
     *cutscene = CutsceneState::default();
-    let entity = spawn_npc(&mut commands, NpcId::Ben, BEN_AMBUSH_ENTRY_POS, Direction::Left);
+    let entity = spawn_npc(&mut commands, NpcId::Ben, maps.ben_ambush_entry, Direction::Left);
     commands.entity(entity).insert(BenActor);
 }
 
@@ -47,6 +53,7 @@ pub fn cutscene_sequencer_system(
     mut ben_q: Query<(Entity, &mut GridPos, &mut Facing), (With<BenActor>, Without<MoveTween>)>,
     gun_q: Query<Entity, With<GunPickupProp>>,
     player_q: Query<&Transform, With<Player>>,
+    maps: Res<GameMaps>,
 ) {
     cutscene.timer.tick(time.delta());
     if !cutscene.timer.is_finished() {
@@ -58,8 +65,9 @@ pub fn cutscene_sequencer_system(
             if let Ok((entity, mut pos, mut facing)) = ben_q.single_mut() {
                 let start = pos.to_world();
                 facing.dir = Direction::Left;
-                *pos = GUN_SPOT_POS;
-                commands.entity(entity).insert(MoveTween::new(start, GUN_SPOT_POS.to_world()));
+                let (_, gun_pos) = maps.gun_spot;
+                *pos = gun_pos;
+                commands.entity(entity).insert(MoveTween::new(start, gun_pos.to_world()));
             }
             cutscene.phase = CutscenePhase::BenGrabsGun;
             cutscene.timer = Timer::from_seconds(0.5, TimerMode::Once);

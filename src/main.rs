@@ -4,6 +4,7 @@ mod dialogue;
 mod end_screen;
 mod grid;
 mod interaction;
+mod ldtk;
 mod npc;
 mod player;
 mod quest;
@@ -21,6 +22,8 @@ use states::{AppState, InputLock};
 use transitions::FadeState;
 
 fn main() {
+    let maps = ldtk::GameMaps::load();
+    let current_level = ldtk::CurrentLevel(maps.outdoor);
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -36,6 +39,8 @@ fn main() {
             }),
             ..default()
         }))
+        .insert_resource(maps)
+        .insert_resource(current_level)
         .init_state::<AppState>()
         .add_message::<InteractionEvent>()
         .init_resource::<InputLock>()
@@ -72,7 +77,7 @@ fn main() {
                 // dialogue::dialogue_render_system,
                 // quest::quest_hint_text_system,
                 // tilemap::refresh_gun_spot_system,
-                player::camera_follow_system,
+                player::camera_fit_level_system,
                 player::update_facing_indicator_system,
                 player::player_animation_system,
             ),

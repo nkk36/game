@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
-use crate::grid::{Direction, GridPos, TILE_SIZE};
-use crate::interaction::{DoorTarget, Interactable};
+use crate::grid::{GridPos, TILE_SIZE};
+use crate::interaction::Interactable;
+use crate::ldtk::{CurrentLevel, GameMaps, LevelId};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TileKind {
@@ -40,6 +41,29 @@ impl TileKind {
                 | FurnitureBed
                 | FurnitureBedGun
         )
+    }
+
+    /// Maps an LDtk `Terrain` IntGrid value identifier to its tile kind.
+    pub fn from_identifier(s: &str) -> Option<Self> {
+        use TileKind::*;
+        Some(match s {
+            "Grass" => Grass,
+            "Path" => Path,
+            "HouseWall" => HouseWall,
+            "DoorClosed" => DoorClosed,
+            "DoorBen" => DoorBen,
+            "SignPost" => SignPost,
+            "Floor" => Floor,
+            "Wall" => Wall,
+            "ExitDoor" => ExitDoor,
+            "FurnitureCouch" => FurnitureCouch,
+            "FurnitureTv" => FurnitureTv,
+            "FurnitureTable" => FurnitureTable,
+            "FurnitureCounter" => FurnitureCounter,
+            "FurnitureBed" => FurnitureBed,
+            "FurnitureBedGun" => FurnitureBedGun,
+            _ => return None,
+        })
     }
 
     pub fn color(self) -> Color {
@@ -97,128 +121,9 @@ impl TileGrid {
         }
     }
 
-    pub fn fill_rect(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, kind: TileKind) {
-        for y in y0..=y1 {
-            for x in x0..=x1 {
-                self.set(x, y, kind);
-            }
-        }
-    }
-
     pub fn is_blocked(&self, x: i32, y: i32) -> bool {
         self.get(x, y).is_blocking()
     }
-}
-
-// ---------------------------------------------------------------------
-// Outdoor map
-// ---------------------------------------------------------------------
-
-pub const OUTDOOR_WIDTH: i32 = 17;
-pub const OUTDOOR_HEIGHT: i32 = 7;
-pub const OUTDOOR_PATH_Y: i32 = 2;
-pub const OUTDOOR_DOOR_Y: i32 = 4;
-pub const OUTDOOR_ROOF_Y: i32 = 5;
-
-pub const NEIGHBOR1_X: i32 = 2;
-pub const NEIGHBOR2_X: i32 = 7;
-pub const BEN_HOUSE_X: i32 = 12;
-
-pub const BEN_DOOR_POS: GridPos = GridPos { x: BEN_HOUSE_X + 1, y: OUTDOOR_DOOR_Y };
-pub const OUTDOOR_SPAWN: GridPos = GridPos { x: 1, y: OUTDOOR_PATH_Y };
-pub const OUTDOOR_SPAWN_FACING: Direction = Direction::Up;
-/// Where the player lands after walking back out of the house.
-pub const OUTDOOR_RETURN_POS: GridPos = GridPos { x: BEN_HOUSE_X + 1, y: OUTDOOR_DOOR_Y - 1 };
-pub const OUTDOOR_RETURN_FACING: Direction = Direction::Down;
-
-fn place_house(grid: &mut TileGrid, base_x: i32, door_kind: TileKind) {
-    grid.fill_rect(base_x, OUTDOOR_ROOF_Y, base_x + 2, OUTDOOR_ROOF_Y, TileKind::HouseWall);
-    grid.set(base_x, OUTDOOR_DOOR_Y, TileKind::HouseWall);
-    grid.set(base_x + 1, OUTDOOR_DOOR_Y, door_kind);
-    grid.set(base_x + 2, OUTDOOR_DOOR_Y, TileKind::HouseWall);
-}
-
-pub fn build_outdoor_grid() -> TileGrid {
-    let mut grid = TileGrid::filled(OUTDOOR_WIDTH, OUTDOOR_HEIGHT, TileKind::Grass);
-    grid.fill_rect(0, OUTDOOR_PATH_Y, OUTDOOR_WIDTH - 1, OUTDOOR_PATH_Y, TileKind::Path);
-
-    place_house(&mut grid, NEIGHBOR1_X, TileKind::DoorClosed);
-    place_house(&mut grid, NEIGHBOR2_X, TileKind::DoorClosed);
-    place_house(&mut grid, BEN_HOUSE_X, TileKind::DoorBen);
-
-    grid.set(NEIGHBOR1_X + 1, 1, TileKind::SignPost);
-    grid.set(NEIGHBOR2_X + 1, 1, TileKind::SignPost);
-
-    grid
-}
-
-pub const OUTDOOR_SIGNS: [(GridPos, &str); 2] = [
-    (GridPos { x: NEIGHBOR1_X + 1, y: 1 }, "A weathered sign: \"The Johnsons\""),
-    (GridPos { x: NEIGHBOR2_X + 1, y: 1 }, "A weathered sign: \"The Millers\""),
-];
-
-// ---------------------------------------------------------------------
-// House interior map
-// ---------------------------------------------------------------------
-
-pub const INTERIOR_WIDTH: i32 = 21;
-pub const INTERIOR_HEIGHT: i32 = 15;
-
-pub const EXIT_DOOR_POS: GridPos = GridPos { x: 10, y: 0 };
-pub const INTERIOR_SPAWN: GridPos = GridPos { x: 10, y: 1 };
-pub const INTERIOR_SPAWN_FACING: Direction = Direction::Up;
-
-pub const MOM_POS: GridPos = GridPos { x: 5, y: 4 };
-pub const DAD_POS: GridPos = GridPos { x: 15, y: 4 };
-pub const OLDER_BROTHER_POS: GridPos = GridPos { x: 3, y: 11 };
-pub const YOUNGER_BROTHER_POS: GridPos = GridPos { x: 10, y: 11 };
-
-/// Ben's bed - the gun hiding spot. Player must stand just south of it,
-/// facing north, to interact with it.
-pub const GUN_SPOT_POS: GridPos = GridPos { x: 17, y: 11 };
-/// Where Ben is placed at the start of the ambush cutscene, and the tile
-/// he walks to (the gun spot itself) during it.
-pub const BEN_AMBUSH_ENTRY_POS: GridPos = GridPos { x: 19, y: 10 };
-
-pub fn build_interior_grid() -> TileGrid {
-    let mut grid = TileGrid::filled(INTERIOR_WIDTH, INTERIOR_HEIGHT, TileKind::Floor);
-
-    // Outer walls.
-    grid.fill_rect(0, 0, INTERIOR_WIDTH - 1, 0, TileKind::Wall);
-    grid.fill_rect(0, INTERIOR_HEIGHT - 1, INTERIOR_WIDTH - 1, INTERIOR_HEIGHT - 1, TileKind::Wall);
-    grid.fill_rect(0, 0, 0, INTERIOR_HEIGHT - 1, TileKind::Wall);
-    grid.fill_rect(INTERIOR_WIDTH - 1, 0, INTERIOR_WIDTH - 1, INTERIOR_HEIGHT - 1, TileKind::Wall);
-    grid.set(EXIT_DOOR_POS.x, EXIT_DOOR_POS.y, TileKind::ExitDoor);
-
-    // Horizontal partition between bottom rooms (Living Room/Kitchen) and
-    // top rooms (the two brothers' rooms and Ben's), with doorless gaps.
-    grid.fill_rect(1, 7, INTERIOR_WIDTH - 2, 7, TileKind::Wall);
-    for gap_x in [5, 10, 15] {
-        grid.set(gap_x, 7, TileKind::Floor);
-    }
-
-    // Vertical partition separating Living Room from Kitchen. Starts at
-    // y=2 (not y=1) so the entrance row stays clear - otherwise it walls
-    // off the tile the player spawns on right after walking in.
-    grid.fill_rect(10, 2, 10, 6, TileKind::Wall);
-    grid.set(10, 3, TileKind::Floor);
-
-    // Vertical partitions separating the three top rooms.
-    grid.fill_rect(7, 8, 7, 13, TileKind::Wall);
-    grid.set(7, 10, TileKind::Floor);
-    grid.fill_rect(14, 8, 14, 13, TileKind::Wall);
-    grid.set(14, 10, TileKind::Floor);
-
-    // Furniture.
-    grid.set(3, 3, TileKind::FurnitureCouch);
-    grid.set(7, 5, TileKind::FurnitureTv);
-    grid.set(17, 3, TileKind::FurnitureCounter);
-    grid.set(13, 5, TileKind::FurnitureTable);
-    grid.set(2, 12, TileKind::FurnitureBed);
-    grid.set(12, 12, TileKind::FurnitureBed);
-    grid.set(GUN_SPOT_POS.x, GUN_SPOT_POS.y, TileKind::FurnitureBedGun);
-
-    grid
 }
 
 // ---------------------------------------------------------------------
@@ -231,7 +136,7 @@ pub struct OutdoorEntity;
 #[derive(Component, Clone)]
 pub struct InteriorEntity;
 
-/// The water-gun prop entity sitting at [`GUN_SPOT_POS`]. Gains an
+/// The water-gun prop entity sitting at [`GameMaps::gun_spot`]. Gains an
 /// [`Interactable::GunHidingSpot`] once the quest unlocks it, and is
 /// despawned by the cutscene when Ben grabs it.
 #[derive(Component)]
@@ -279,19 +184,40 @@ fn spawn_tile_sprites(commands: &mut Commands, grid: &TileGrid, marker: impl Com
     }
 }
 
-pub fn spawn_outdoor_map_system(mut commands: Commands) {
-    let grid = build_outdoor_grid();
-    commands.insert_resource(ActiveCollision::from_grid(&grid));
-    spawn_tile_sprites(&mut commands, &grid, OutdoorEntity, 0.0);
+/// Spawns a level's tiles, collision and entities, each tagged with `marker`
+/// so the matching despawn system can clear them.
+fn spawn_level(commands: &mut Commands, maps: &GameMaps, level: LevelId, marker: impl Component + Clone) {
+    let map = &maps.levels[level];
+    commands.insert_resource(ActiveCollision::from_grid(&map.grid));
+    spawn_tile_sprites(commands, &map.grid, marker.clone(), 0.0);
 
-    commands.spawn((
-        BEN_DOOR_POS,
-        Interactable::Door(DoorTarget::EnterHouse),
-        OutdoorEntity,
-    ));
-    for (pos, text) in OUTDOOR_SIGNS {
-        commands.spawn((pos, Interactable::Sign(text), OutdoorEntity));
+    for &(pos, link) in &map.doors {
+        commands.spawn((pos, Interactable::Door(link), marker.clone()));
     }
+    for &(pos, text) in &map.signs {
+        commands.spawn((pos, Interactable::Sign(text), marker.clone()));
+    }
+
+    let (gun_level, gun_pos) = maps.gun_spot;
+    if gun_level == level {
+        let gun_world = gun_pos.to_world();
+        commands.spawn((
+            Sprite::from_color(Color::srgb(1.0, 0.85, 0.1), Vec2::splat(TILE_SIZE * 0.4)),
+            Transform::from_xyz(gun_world.x, gun_world.y, 2.5),
+            gun_pos,
+            GunPickupProp,
+            marker.clone(),
+        ));
+    }
+
+    for &(pos, id, facing) in &map.npcs {
+        let npc = crate::npc::spawn_npc(commands, id, pos, facing);
+        commands.entity(npc).remove::<InteriorEntity>().insert(marker.clone());
+    }
+}
+
+pub fn spawn_outdoor_map_system(mut commands: Commands, maps: Res<GameMaps>) {
+    spawn_level(&mut commands, &maps, maps.outdoor, OutdoorEntity);
 }
 
 pub fn despawn_outdoor_map_system(mut commands: Commands, q: Query<Entity, With<OutdoorEntity>>) {
@@ -300,26 +226,9 @@ pub fn despawn_outdoor_map_system(mut commands: Commands, q: Query<Entity, With<
     }
 }
 
-pub fn spawn_interior_map_system(mut commands: Commands) {
-    let grid = build_interior_grid();
-    commands.insert_resource(ActiveCollision::from_grid(&grid));
-    spawn_tile_sprites(&mut commands, &grid, InteriorEntity, 0.0);
-
-    commands.spawn((EXIT_DOOR_POS, Interactable::Door(DoorTarget::ExitHouse), InteriorEntity));
-
-    let gun_world = GUN_SPOT_POS.to_world();
-    commands.spawn((
-        Sprite::from_color(Color::srgb(1.0, 0.85, 0.1), Vec2::splat(TILE_SIZE * 0.4)),
-        Transform::from_xyz(gun_world.x, gun_world.y, 2.5),
-        GUN_SPOT_POS,
-        GunPickupProp,
-        InteriorEntity,
-    ));
-
-    crate::npc::spawn_npc(&mut commands, crate::npc::NpcId::Mom, MOM_POS, Direction::Down);
-    crate::npc::spawn_npc(&mut commands, crate::npc::NpcId::Dad, DAD_POS, Direction::Down);
-    crate::npc::spawn_npc(&mut commands, crate::npc::NpcId::OlderBrother, OLDER_BROTHER_POS, Direction::Down);
-    crate::npc::spawn_npc(&mut commands, crate::npc::NpcId::YoungerBrother, YOUNGER_BROTHER_POS, Direction::Down);
+/// Spawns whichever indoor level [`CurrentLevel`] points at.
+pub fn spawn_interior_map_system(mut commands: Commands, maps: Res<GameMaps>, current: Res<CurrentLevel>) {
+    spawn_level(&mut commands, &maps, current.0, InteriorEntity);
 }
 
 pub fn despawn_interior_map_system(mut commands: Commands, q: Query<Entity, With<InteriorEntity>>) {

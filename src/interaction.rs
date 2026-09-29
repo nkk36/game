@@ -1,20 +1,15 @@
 use bevy::prelude::*;
 
 use crate::grid::{Direction, GridPos};
+use crate::ldtk::DoorLink;
 use crate::npc::NpcId;
 use crate::player::Player;
 use crate::states::InputLock;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DoorTarget {
-    EnterHouse,
-    ExitHouse,
-}
-
 #[derive(Component, Debug, Clone, Copy)]
 pub enum Interactable {
     Npc(NpcId),
-    Door(DoorTarget),
+    Door(DoorLink),
     GunHidingSpot,
     Sign(&'static str),
 }

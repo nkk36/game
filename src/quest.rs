@@ -1,6 +1,7 @@
 use bevy::platform::collections::HashSet;
 use bevy::prelude::*;
 
+use crate::ldtk::{CurrentLevel, GameMaps};
 use crate::npc::NpcId;
 use crate::states::AppState;
 
@@ -115,9 +116,11 @@ pub fn spawn_quest_hint_ui(mut commands: Commands) {
 pub fn quest_hint_text_system(
     app_state: Res<State<AppState>>,
     quest: Res<QuestState>,
+    maps: Res<GameMaps>,
+    current_level: Res<CurrentLevel>,
     mut text_q: Query<&mut Text, With<QuestHintText>>,
 ) {
-    if !quest.is_changed() && !app_state.is_changed() {
+    if !quest.is_changed() && !app_state.is_changed() && !current_level.is_changed() {
         return;
     }
     let Ok(mut text) = text_q.single_mut() else {
@@ -125,6 +128,8 @@ pub fn quest_hint_text_system(
     };
     let hint = match app_state.get() {
         AppState::Outdoor => "Find Ben's house and go inside.",
+        // Ben's house is the one with the gun hidden in it.
+        AppState::HouseInterior if current_level.0 != maps.gun_spot.0 => "This isn't Ben's house.",
         AppState::HouseInterior => match quest.current_step {
             0 => "Ask Ben's Mom about the golden gun.",
             1 => "Ask Ben's Dad about the golden gun.",
