@@ -22,6 +22,10 @@ pub struct FacingIndicator;
 /// plus one blink), looped continuously regardless of movement state.
 const IDLE_FRAME_SIZE: UVec2 = UVec2::new(128, 128);
 const IDLE_FRAME_COUNT: u32 = 6;
+/// The character only occupies this part of each frame (measured from
+/// Idle.png's alpha; the rest is transparent padding), so the atlas is
+/// cropped to it - otherwise the player renders at a quarter of a tile.
+const IDLE_CHARACTER_RECT: URect = URect { min: UVec2::new(40, 84), max: UVec2::new(75, 128) };
 const IDLE_FRAME_SECONDS: f32 = 0.15;
 
 #[derive(Component)]
@@ -42,17 +46,18 @@ pub fn spawn_player_system(
     let (spawn_pos, spawn_facing) = maps.player_start;
     let world = spawn_pos.to_world();
     let texture = asset_server.load("Idle.png");
-    let layout = atlas_layouts.add(TextureAtlasLayout::from_grid(
-        IDLE_FRAME_SIZE,
-        IDLE_FRAME_COUNT,
-        1,
-        None,
-        None,
-    ));
+    let mut layout = TextureAtlasLayout::new_empty(UVec2::new(IDLE_FRAME_SIZE.x * IDLE_FRAME_COUNT, IDLE_FRAME_SIZE.y));
+    for i in 0..IDLE_FRAME_COUNT {
+        let offset = UVec2::new(i * IDLE_FRAME_SIZE.x, 0);
+        layout.add_texture(URect { min: IDLE_CHARACTER_RECT.min + offset, max: IDLE_CHARACTER_RECT.max + offset });
+    }
+    let layout = atlas_layouts.add(layout);
+    // One tile tall, keeping the character's aspect ratio.
+    let character_size = IDLE_CHARACTER_RECT.size().as_vec2();
     commands
         .spawn((
             Sprite {
-                custom_size: Some(Vec2::splat(TILE_SIZE * 0.9)),
+                custom_size: Some(character_size * (TILE_SIZE / character_size.y)),
                 ..Sprite::from_atlas_image(texture, TextureAtlas { layout, index: 0 })
             },
             Transform::from_xyz(world.x, world.y, 3.0),
