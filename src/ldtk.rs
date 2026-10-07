@@ -3,7 +3,8 @@
 //! The project is embedded at compile time (so the web build needs no file
 //! access) and parsed once at startup into a [`GameMaps`] resource. Only the
 //! parts of the LDtk format the game uses are deserialized: each level's
-//! `Terrain` IntGrid layer and `Entities` layer.
+//! `Terrain` IntGrid layer, its optional `Below` IntGrid layer (what an
+//! `OpenToBelow` tile looks down onto) and its `Entities` layer.
 //!
 //! The level named `Outdoor` is the neighborhood; every other level (house
 //! interiors, Ben's backyard) is entered through a `Door` whose `destination`
@@ -26,6 +27,7 @@ const PROJECT_JSON: &str = include_str!("../ldtk/neighborhood.ldtk");
 
 const TERRAIN_LAYER: &str = "Terrain";
 const ENTITIES_LAYER: &str = "Entities";
+const BELOW_LAYER: &str = "Below";
 const OUTDOOR_LEVEL: &str = "Outdoor";
 
 /// Index into [`GameMaps::levels`].
@@ -44,6 +46,8 @@ pub struct DoorLink {
 pub struct LevelMap {
     pub identifier: String,
     pub grid: TileGrid,
+    /// For `OpenToBelow` tiles: the tile of the floor below seen there.
+    pub below: HashMap<(i32, i32), TileKind>,
     pub doors: Vec<(GridPos, DoorLink)>,
     pub signs: Vec<(GridPos, &'static str)>,
     pub npcs: Vec<(GridPos, NpcId, Direction)>,
@@ -144,10 +148,11 @@ impl GameMaps {
 
         for level in &project.levels {
             let id = levels.len();
-            let (grid, entities) = parse_level(level, &tile_kinds)?;
+            let (grid, below, entities) = parse_level(level, &tile_kinds)?;
             let mut map = LevelMap {
                 identifier: level.identifier.clone(),
                 grid,
+                below,
                 doors: Vec::new(),
                 signs: Vec::new(),
                 npcs: Vec::new(),
@@ -249,7 +254,9 @@ impl EntityData {
     }
 }
 
-fn parse_level(level: &Level, tile_kinds: &HashMap<i64, TileKind>) -> Result<(TileGrid, Vec<EntityData>), String> {
+type ParsedLevel = (TileGrid, HashMap<(i32, i32), TileKind>, Vec<EntityData>);
+
+fn parse_level(level: &Level, tile_kinds: &HashMap<i64, TileKind>) -> Result<ParsedLevel, String> {
     let layer = |id: &str| {
         level
             .layer_instances
@@ -272,6 +279,18 @@ fn parse_level(level: &Level, tile_kinds: &HashMap<i64, TileKind>) -> Result<(Ti
         grid.set(col, h - 1 - row, kind);
     }
 
+    // Optional; 0 is LDtk's "unpainted". Uses the same values as Terrain.
+    let mut below = HashMap::new();
+    if let Some(layer) = level.layer_instances.iter().find(|l| l.identifier == BELOW_LAYER) {
+        for (i, value) in layer.int_grid_csv.iter().enumerate().filter(|(_, v)| **v != 0) {
+            let (col, row) = (i as i32 % w, i as i32 / w);
+            let kind = *tile_kinds
+                .get(value)
+                .ok_or_else(|| format!("level `{}` has an unknown Below cell at ({col}, {row})", level.identifier))?;
+            below.insert((col, h - 1 - row), kind);
+        }
+    }
+
     let entity_layer = layer(ENTITIES_LAYER)?;
     let grid_size = entity_layer.grid_size as f32;
     debug_assert_eq!(grid_size, TILE_SIZE);
@@ -287,7 +306,7 @@ fn parse_level(level: &Level, tile_kinds: &HashMap<i64, TileKind>) -> Result<(Ti
         })
         .collect();
 
-    Ok((grid, entities))
+    Ok((grid, below, entities))
 }
 
 fn parse_direction(s: &str) -> Result<Direction, String> {
@@ -391,7 +410,10 @@ mod tests {
     use super::*;
 
     fn is_door_tile(kind: TileKind) -> bool {
-        matches!(kind, TileKind::DoorBen | TileKind::ExitDoor | TileKind::SlidingDoor)
+        matches!(
+            kind,
+            TileKind::DoorBen | TileKind::ExitDoor | TileKind::SlidingDoor | TileKind::StairsUp | TileKind::StairsDown
+        )
     }
 
     #[test]
@@ -417,7 +439,6 @@ mod tests {
                 assert!(is_door_tile(level.grid.get(p.x, p.y)), "{}: door at {p:?} not on a door tile", level.identifier);
                 assert!(walkable(link.level, link.pos), "{}: door at {p:?} leads onto a blocked tile", level.identifier);
             }
-            // Stairs to levels that don't exist yet carry a sign instead of a door.
             for (p, _) in &level.signs {
                 let kind = level.grid.get(p.x, p.y);
                 assert!(
@@ -428,6 +449,10 @@ mod tests {
             }
             for (p, _, _) in &level.npcs {
                 assert!(walkable(id, *p));
+            }
+            for &(x, y) in level.below.keys() {
+                let kind = level.grid.get(x, y);
+                assert_eq!(kind, TileKind::OpenToBelow, "{}: Below cell at ({x}, {y}) under {kind:?}", level.identifier);
             }
             // Wherever the player arrives, the room label has a name to show.
             for (p, link) in &level.doors {
@@ -461,6 +486,9 @@ mod tests {
         let level = |name: &str| maps.levels.iter().position(|l| l.identifier == name).unwrap();
         assert!(maps.is_bens_house(level("HouseInterior")));
         assert!(maps.is_bens_house(level("Backyard")));
+        assert!(maps.is_bens_house(level("Basement")));
+        assert!(maps.is_bens_house(level("Upstairs")));
+        assert!(maps.is_bens_house(level("Balcony")));
         assert!(!maps.is_bens_house(level("House2Interior")));
         assert!(!maps.is_bens_house(maps.outdoor));
     }

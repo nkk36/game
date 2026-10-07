@@ -172,17 +172,21 @@ pub fn teleport_player(
     }
 }
 
-/// Centers the camera on the current level and zooms so the whole level
-/// (plus a half-tile margin) is visible. `AutoMin` keeps it fitted as the
-/// window resizes, so this only needs to run when the level changes.
-pub fn camera_fit_level_system(
+/// How much of the outdoor level the follow camera shows, in tiles (at
+/// least this much; extra space on the longer window axis is kept).
+const FOLLOW_VIEW_TILES: Vec2 = Vec2::new(30.0, 20.0);
+
+/// Frames the current level. The outdoor neighborhood is larger than the
+/// screen, so there the camera follows the player at a fixed zoom, stopping
+/// at the level's edges. Every other level is centered and zoomed so it is
+/// entirely visible (plus a half-tile margin); `AutoMin` keeps both fitted as
+/// the window resizes.
+pub fn camera_system(
     maps: Res<GameMaps>,
     current_level: Res<CurrentLevel>,
-    mut camera_q: Query<(&mut Transform, &mut Projection), With<Camera2d>>,
+    player_q: Query<&Transform, (With<Player>, Without<Camera2d>)>,
+    mut camera_q: Query<(&mut Transform, &mut Projection), (With<Camera2d>, Without<Player>)>,
 ) {
-    if !current_level.is_changed() {
-        return;
-    }
     let Ok((mut cam_t, mut projection)) = camera_q.single_mut() else {
         return;
     };
@@ -190,10 +194,32 @@ pub fn camera_fit_level_system(
     let (w, h) = (grid.width as f32, grid.height as f32);
     // Tiles are centered on their grid position, so the level spans
     // -TILE_SIZE/2 ..= (w - 0.5) * TILE_SIZE horizontally (same vertically).
-    cam_t.translation.x = (w - 1.0) * TILE_SIZE / 2.0;
-    cam_t.translation.y = (h - 1.0) * TILE_SIZE / 2.0;
-    *projection = Projection::Orthographic(OrthographicProjection {
-        scaling_mode: ScalingMode::AutoMin { min_width: (w + 1.0) * TILE_SIZE, min_height: (h + 1.0) * TILE_SIZE },
-        ..OrthographicProjection::default_2d()
-    });
+    let center = Vec2::new(w - 1.0, h - 1.0) * TILE_SIZE / 2.0;
+    let following = maps.is_outdoor(current_level.0);
+
+    if current_level.is_changed() {
+        let min_size = if following { FOLLOW_VIEW_TILES * TILE_SIZE } else { Vec2::new(w + 1.0, h + 1.0) * TILE_SIZE };
+        *projection = Projection::Orthographic(OrthographicProjection {
+            scaling_mode: ScalingMode::AutoMin { min_width: min_size.x, min_height: min_size.y },
+            ..OrthographicProjection::default_2d()
+        });
+        cam_t.translation.x = center.x;
+        cam_t.translation.y = center.y;
+    }
+    if !following {
+        return;
+    }
+    let (Ok(player), Projection::Orthographic(ortho)) = (player_q.single(), &*projection) else {
+        return;
+    };
+    // `area` is updated from the window size after this runs, so right after
+    // a level change it can be a frame stale; that frame is under the fade.
+    let half_view = ortho.area.size() / 2.0;
+    let level_min = Vec2::splat(-TILE_SIZE / 2.0);
+    let level_max = Vec2::new(w, h) * TILE_SIZE + level_min;
+    let follow_axis = |target: f32, half_view: f32, min: f32, max: f32, center: f32| {
+        if max - min <= half_view * 2.0 { center } else { target.clamp(min + half_view, max - half_view) }
+    };
+    cam_t.translation.x = follow_axis(player.translation.x, half_view.x, level_min.x, level_max.x, center.x);
+    cam_t.translation.y = follow_axis(player.translation.y, half_view.y, level_min.y, level_max.y, center.y);
 }

@@ -87,7 +87,7 @@ fn main() {
                 quest::quest_hint_text_system,
                 room_label::room_label_system,
                 tilemap::refresh_gun_spot_system,
-                player::camera_fit_level_system,
+                player::camera_system.after(grid::move_tween_system),
                 player::update_facing_indicator_system,
                 player::player_animation_system,
             ),

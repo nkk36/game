@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::grid::{GridPos, TILE_SIZE};
 use crate::interaction::Interactable;
-use crate::ldtk::{CurrentLevel, GameMaps, LevelId};
+use crate::ldtk::{CurrentLevel, GameMaps, LevelId, LevelMap};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TileKind {
@@ -49,6 +49,34 @@ pub enum TileKind {
     Fountain,
     Grill,
     PizzaOven,
+    PoolTable,
+    CueRack,
+    ArcadeCabinet,
+    TheaterSeat,
+    ProjectorScreen,
+    WineRack,
+    GymEquipment,
+    Dresser,
+    Nightstand,
+    Bathtub,
+    Shower,
+    ClosetRack,
+    WasherDryer,
+    Railing,
+    /// A drop to the level below (foyer, backyard). Drawn as a dimmed copy
+    /// of the level's `Below` tile here, if it has one.
+    OpenToBelow,
+    Road,
+    Driveway,
+    RoofSlate,
+    RoofTerracotta,
+    RoofShingle,
+    GarageDoor,
+    Pool,
+    Car,
+    IronFence,
+    Lamppost,
+    TennisCourt,
 }
 
 impl TileKind {
@@ -94,6 +122,29 @@ impl TileKind {
                 | Fountain
                 | Grill
                 | PizzaOven
+                | PoolTable
+                | CueRack
+                | ArcadeCabinet
+                | TheaterSeat
+                | ProjectorScreen
+                | WineRack
+                | GymEquipment
+                | Dresser
+                | Nightstand
+                | Bathtub
+                | Shower
+                | ClosetRack
+                | WasherDryer
+                | Railing
+                | OpenToBelow
+                | RoofSlate
+                | RoofTerracotta
+                | RoofShingle
+                | GarageDoor
+                | Pool
+                | Car
+                | IronFence
+                | Lamppost
         )
     }
 
@@ -144,6 +195,32 @@ impl TileKind {
             "Fountain" => Fountain,
             "Grill" => Grill,
             "PizzaOven" => PizzaOven,
+            "PoolTable" => PoolTable,
+            "CueRack" => CueRack,
+            "ArcadeCabinet" => ArcadeCabinet,
+            "TheaterSeat" => TheaterSeat,
+            "ProjectorScreen" => ProjectorScreen,
+            "WineRack" => WineRack,
+            "GymEquipment" => GymEquipment,
+            "Dresser" => Dresser,
+            "Nightstand" => Nightstand,
+            "Bathtub" => Bathtub,
+            "Shower" => Shower,
+            "ClosetRack" => ClosetRack,
+            "WasherDryer" => WasherDryer,
+            "Railing" => Railing,
+            "OpenToBelow" => OpenToBelow,
+            "Road" => Road,
+            "Driveway" => Driveway,
+            "RoofSlate" => RoofSlate,
+            "RoofTerracotta" => RoofTerracotta,
+            "RoofShingle" => RoofShingle,
+            "GarageDoor" => GarageDoor,
+            "Pool" => Pool,
+            "Car" => Car,
+            "IronFence" => IronFence,
+            "Lamppost" => Lamppost,
+            "TennisCourt" => TennisCourt,
             _ => return None,
         })
     }
@@ -194,6 +271,32 @@ impl TileKind {
             Fountain => Color::srgb(0.35, 0.59, 0.78),
             Grill => Color::srgb(0.16, 0.16, 0.18),
             PizzaOven => Color::srgb(0.67, 0.35, 0.2),
+            PoolTable => Color::srgb(0.13, 0.45, 0.22),
+            CueRack => Color::srgb(0.4, 0.26, 0.14),
+            ArcadeCabinet => Color::srgb(0.45, 0.2, 0.6),
+            TheaterSeat => Color::srgb(0.5, 0.1, 0.14),
+            ProjectorScreen => Color::srgb(0.95, 0.95, 0.92),
+            WineRack => Color::srgb(0.4, 0.12, 0.2),
+            GymEquipment => Color::srgb(0.35, 0.37, 0.4),
+            Dresser => Color::srgb(0.47, 0.32, 0.2),
+            Nightstand => Color::srgb(0.55, 0.4, 0.26),
+            Bathtub => Color::srgb(0.92, 0.94, 0.96),
+            Shower => Color::srgb(0.7, 0.85, 0.92),
+            ClosetRack => Color::srgb(0.6, 0.45, 0.55),
+            WasherDryer => Color::srgb(0.85, 0.87, 0.9),
+            Railing => Color::srgb(0.85, 0.82, 0.75),
+            OpenToBelow => Color::srgb(0.08, 0.08, 0.1),
+            Road => Color::srgb(0.22, 0.22, 0.25),
+            Driveway => Color::srgb(0.78, 0.77, 0.74),
+            RoofSlate => Color::srgb(0.32, 0.36, 0.42),
+            RoofTerracotta => Color::srgb(0.72, 0.38, 0.24),
+            RoofShingle => Color::srgb(0.42, 0.33, 0.30),
+            GarageDoor => Color::srgb(0.88, 0.86, 0.80),
+            Pool => Color::srgb(0.30, 0.75, 0.90),
+            Car => Color::srgb(0.12, 0.14, 0.20),
+            IronFence => Color::srgb(0.15, 0.15, 0.16),
+            Lamppost => Color::srgb(0.95, 0.88, 0.55),
+            TennisCourt => Color::srgb(0.25, 0.45, 0.65),
         }
     }
 }
@@ -280,13 +383,18 @@ impl ActiveCollision {
     }
 }
 
-fn spawn_tile_sprites(commands: &mut Commands, grid: &TileGrid, marker: impl Component + Clone, z: f32) {
+fn spawn_tile_sprites(commands: &mut Commands, map: &LevelMap, marker: impl Component + Clone, z: f32) {
+    let grid = &map.grid;
     for y in 0..grid.height {
         for x in 0..grid.width {
             let kind = grid.get(x, y);
+            let color = match (kind, map.below.get(&(x, y))) {
+                (TileKind::OpenToBelow, Some(below)) => seen_from_above(below.color()),
+                _ => kind.color(),
+            };
             let world = GridPos::new(x, y).to_world();
             commands.spawn((
-                Sprite::from_color(kind.color(), Vec2::splat(TILE_SIZE)),
+                Sprite::from_color(color, Vec2::splat(TILE_SIZE)),
                 Transform::from_xyz(world.x, world.y, z),
                 marker.clone(),
             ));
@@ -294,12 +402,19 @@ fn spawn_tile_sprites(commands: &mut Commands, grid: &TileGrid, marker: impl Com
     }
 }
 
+/// Darkens and cools a tile's color so a lower floor seen over a railing
+/// reads as further away than the floor the player stands on.
+fn seen_from_above(color: Color) -> Color {
+    let c = color.to_srgba();
+    Color::srgb(c.red * 0.45 + 0.02, c.green * 0.45 + 0.03, c.blue * 0.45 + 0.06)
+}
+
 /// Spawns a level's tiles, collision and entities, each tagged with `marker`
 /// so the matching despawn system can clear them.
 fn spawn_level(commands: &mut Commands, maps: &GameMaps, level: LevelId, marker: impl Component + Clone) {
     let map = &maps.levels[level];
     commands.insert_resource(ActiveCollision::from_grid(&map.grid));
-    spawn_tile_sprites(commands, &map.grid, marker.clone(), 0.0);
+    spawn_tile_sprites(commands, map, marker.clone(), 0.0);
 
     for &(pos, link) in &map.doors {
         commands.spawn((pos, Interactable::Door(link), marker.clone()));
