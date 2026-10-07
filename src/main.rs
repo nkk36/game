@@ -8,6 +8,7 @@ mod ldtk;
 mod npc;
 mod player;
 mod quest;
+mod room_label;
 mod states;
 mod tilemap;
 mod transitions;
@@ -55,6 +56,7 @@ fn main() {
                 dialogue::setup_dialogue_ui,
                 transitions::setup_fade_overlay,
                 quest::spawn_quest_hint_ui,
+                room_label::spawn_room_label_ui,
             ),
         )
         .add_systems(
@@ -63,6 +65,13 @@ fn main() {
         )
         .add_systems(OnExit(AppState::Outdoor), tilemap::despawn_outdoor_map_system)
         .add_systems(OnEnter(AppState::HouseInterior), tilemap::spawn_interior_map_system)
+        // House <-> backyard stays in `HouseInterior`; clear the old level
+        // before `OnEnter` spawns the new one. (Not `OnExit`: the cutscene
+        // plays over the interior map.)
+        .add_systems(
+            OnTransition { exited: AppState::HouseInterior, entered: AppState::HouseInterior },
+            tilemap::despawn_interior_map_system,
+        )
         .add_systems(OnEnter(AppState::Cutscene), cutscene::start_cutscene_system)
         .add_systems(OnEnter(AppState::EndScreen), end_screen::setup_end_screen_system)
         .add_systems(OnExit(AppState::EndScreen), end_screen::despawn_end_screen_system)
@@ -72,11 +81,12 @@ fn main() {
                 grid::move_tween_system,
                 transitions::fade_update_system,
                 transitions::handle_scene_transition_interactions,
-                // dialogue::handle_interaction_for_dialogue,
-                // dialogue::dialogue_advance_system,
-                // dialogue::dialogue_render_system,
-                // quest::quest_hint_text_system,
-                // tilemap::refresh_gun_spot_system,
+                dialogue::handle_interaction_for_dialogue,
+                dialogue::dialogue_advance_system,
+                dialogue::dialogue_render_system,
+                quest::quest_hint_text_system,
+                room_label::room_label_system,
+                tilemap::refresh_gun_spot_system,
                 player::camera_fit_level_system,
                 player::update_facing_indicator_system,
                 player::player_animation_system,

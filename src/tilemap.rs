@@ -21,6 +21,34 @@ pub enum TileKind {
     FurnitureCounter,
     FurnitureBed,
     FurnitureBedGun,
+    FurnitureStove,
+    FurnitureSink,
+    FurnitureFridge,
+    FurnitureIsland,
+    FurnitureStool,
+    FurnitureChair,
+    FurniturePantryShelf,
+    FurnitureFireplace,
+    FurnitureBookcase,
+    FurnitureBookcaseGun,
+    FurnitureRecliner,
+    StairsUp,
+    StairsDown,
+    FurnitureChinaCabinet,
+    FurniturePlant,
+    FurnitureLiquorShelf,
+    FurnitureBarCounter,
+    Rug,
+    FurnitureToilet,
+    SlidingDoor,
+    Paver,
+    Hedge,
+    Bush,
+    FlowerBed,
+    Tree,
+    Fountain,
+    Grill,
+    PizzaOven,
 }
 
 impl TileKind {
@@ -40,6 +68,32 @@ impl TileKind {
                 | FurnitureCounter
                 | FurnitureBed
                 | FurnitureBedGun
+                | FurnitureStove
+                | FurnitureSink
+                | FurnitureFridge
+                | FurnitureIsland
+                | FurnitureStool
+                | FurnitureChair
+                | FurniturePantryShelf
+                | FurnitureFireplace
+                | FurnitureBookcase
+                | FurnitureBookcaseGun
+                | FurnitureRecliner
+                | StairsUp
+                | StairsDown
+                | FurnitureChinaCabinet
+                | FurniturePlant
+                | FurnitureLiquorShelf
+                | FurnitureBarCounter
+                | FurnitureToilet
+                | SlidingDoor
+                | Hedge
+                | Bush
+                | FlowerBed
+                | Tree
+                | Fountain
+                | Grill
+                | PizzaOven
         )
     }
 
@@ -62,6 +116,34 @@ impl TileKind {
             "FurnitureCounter" => FurnitureCounter,
             "FurnitureBed" => FurnitureBed,
             "FurnitureBedGun" => FurnitureBedGun,
+            "FurnitureStove" => FurnitureStove,
+            "FurnitureSink" => FurnitureSink,
+            "FurnitureFridge" => FurnitureFridge,
+            "FurnitureIsland" => FurnitureIsland,
+            "FurnitureStool" => FurnitureStool,
+            "FurnitureChair" => FurnitureChair,
+            "FurniturePantryShelf" => FurniturePantryShelf,
+            "FurnitureFireplace" => FurnitureFireplace,
+            "FurnitureBookcase" => FurnitureBookcase,
+            "FurnitureBookcaseGun" => FurnitureBookcaseGun,
+            "FurnitureRecliner" => FurnitureRecliner,
+            "StairsUp" => StairsUp,
+            "StairsDown" => StairsDown,
+            "FurnitureChinaCabinet" => FurnitureChinaCabinet,
+            "FurniturePlant" => FurniturePlant,
+            "FurnitureLiquorShelf" => FurnitureLiquorShelf,
+            "FurnitureBarCounter" => FurnitureBarCounter,
+            "Rug" => Rug,
+            "FurnitureToilet" => FurnitureToilet,
+            "SlidingDoor" => SlidingDoor,
+            "Paver" => Paver,
+            "Hedge" => Hedge,
+            "Bush" => Bush,
+            "FlowerBed" => FlowerBed,
+            "Tree" => Tree,
+            "Fountain" => Fountain,
+            "Grill" => Grill,
+            "PizzaOven" => PizzaOven,
             _ => return None,
         })
     }
@@ -84,6 +166,34 @@ impl TileKind {
             FurnitureCounter => Color::srgb(0.7, 0.7, 0.75),
             FurnitureBed => Color::srgb(0.4, 0.55, 0.8),
             FurnitureBedGun => Color::srgb(0.4, 0.55, 0.8),
+            FurnitureStove => Color::srgb(0.23, 0.23, 0.25),
+            FurnitureSink => Color::srgb(0.55, 0.71, 0.82),
+            FurnitureFridge => Color::srgb(0.9, 0.9, 0.92),
+            FurnitureIsland => Color::srgb(0.86, 0.84, 0.8),
+            FurnitureStool => Color::srgb(0.35, 0.24, 0.16),
+            FurnitureChair => Color::srgb(0.45, 0.31, 0.18),
+            FurniturePantryShelf => Color::srgb(0.61, 0.49, 0.33),
+            FurnitureFireplace => Color::srgb(0.63, 0.25, 0.18),
+            FurnitureBookcase => Color::srgb(0.29, 0.18, 0.1),
+            FurnitureBookcaseGun => Color::srgb(0.29, 0.18, 0.1),
+            FurnitureRecliner => Color::srgb(0.18, 0.29, 0.22),
+            StairsUp => Color::srgb(0.76, 0.69, 0.57),
+            StairsDown => Color::srgb(0.41, 0.35, 0.29),
+            FurnitureChinaCabinet => Color::srgb(0.43, 0.27, 0.16),
+            FurniturePlant => Color::srgb(0.24, 0.55, 0.24),
+            FurnitureLiquorShelf => Color::srgb(0.55, 0.24, 0.31),
+            FurnitureBarCounter => Color::srgb(0.31, 0.2, 0.12),
+            Rug => Color::srgb(0.55, 0.18, 0.18),
+            FurnitureToilet => Color::srgb(0.94, 0.94, 0.96),
+            SlidingDoor => Color::srgb(0.63, 0.82, 0.9),
+            Paver => Color::srgb(0.71, 0.65, 0.57),
+            Hedge => Color::srgb(0.12, 0.35, 0.14),
+            Bush => Color::srgb(0.18, 0.45, 0.2),
+            FlowerBed => Color::srgb(0.82, 0.35, 0.55),
+            Tree => Color::srgb(0.08, 0.35, 0.12),
+            Fountain => Color::srgb(0.35, 0.59, 0.78),
+            Grill => Color::srgb(0.16, 0.16, 0.18),
+            PizzaOven => Color::srgb(0.67, 0.35, 0.2),
         }
     }
 }

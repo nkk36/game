@@ -128,14 +128,14 @@ pub fn quest_hint_text_system(
     };
     let hint = match app_state.get() {
         AppState::Outdoor => "Find Ben's house and go inside.",
-        // Ben's house is the one with the gun hidden in it.
-        AppState::HouseInterior if current_level.0 != maps.gun_spot.0 => "This isn't Ben's house.",
+        // Ben's house is the one with the gun hidden in it (plus its backyard).
+        AppState::HouseInterior if !maps.is_bens_house(current_level.0) => "This isn't Ben's house.",
         AppState::HouseInterior => match quest.current_step {
             0 => "Ask Ben's Mom about the golden gun.",
             1 => "Ask Ben's Dad about the golden gun.",
             2 => "Ask Ben's Older Brother about the golden gun.",
             3 => "Ask Ben's Younger Brother about the golden gun.",
-            _ => "You know where it is. Check Ben's room!",
+            _ => "You know where it is. Check the study!",
         },
         AppState::Cutscene | AppState::EndScreen => "",
     };

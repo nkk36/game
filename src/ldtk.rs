@@ -5,9 +5,9 @@
 //! parts of the LDtk format the game uses are deserialized: each level's
 //! `Terrain` IntGrid layer and `Entities` layer.
 //!
-//! The level named `Outdoor` is the neighborhood; every other level is an
-//! indoor level, entered through a `Door` whose `destination` field links to
-//! a `SpawnPoint` in that level.
+//! The level named `Outdoor` is the neighborhood; every other level (house
+//! interiors, Ben's backyard) is entered through a `Door` whose `destination`
+//! field links to a `SpawnPoint` in that level.
 //!
 //! LDtk grids are row-major top-down, while the game grid is Y-up, so rows
 //! are flipped on load (`game_y = height - 1 - ldtk_row`).
@@ -47,6 +47,29 @@ pub struct LevelMap {
     pub doors: Vec<(GridPos, DoorLink)>,
     pub signs: Vec<(GridPos, &'static str)>,
     pub npcs: Vec<(GridPos, NpcId, Direction)>,
+    pub rooms: Vec<Room>,
+}
+
+/// A named rectangle of a level (from a `Room` entity), shown on screen
+/// while the player stands inside it.
+pub struct Room {
+    pub name: &'static str,
+    pub min: GridPos,
+    pub max: GridPos,
+}
+
+impl Room {
+    pub fn contains(&self, p: GridPos) -> bool {
+        (self.min.x..=self.max.x).contains(&p.x) && (self.min.y..=self.max.y).contains(&p.y)
+    }
+}
+
+impl LevelMap {
+    /// The room containing `p`, if any. Doorways between rooms usually
+    /// aren't inside one.
+    pub fn room_at(&self, p: GridPos) -> Option<&Room> {
+        self.rooms.iter().find(|r| r.contains(p))
+    }
 }
 
 #[derive(Resource)]
@@ -55,7 +78,7 @@ pub struct GameMaps {
     pub outdoor: LevelId,
     /// Where the player starts (and restarts) in the outdoor level.
     pub player_start: (GridPos, Direction),
-    /// Ben's bed - the gun hiding spot - and the level it's in.
+    /// The study bookcase the gun is hidden in, and the level it's in.
     pub gun_spot: (LevelId, GridPos),
     /// Where Ben is placed at the start of the ambush cutscene. Always in
     /// the same level as the gun spot.
@@ -76,6 +99,21 @@ impl GameMaps {
 
     pub fn is_outdoor(&self, level: LevelId) -> bool {
         level == self.outdoor
+    }
+
+    /// Whether `level` is part of Ben's property: the level with the gun
+    /// spot, or one reachable from it without going back out to the
+    /// neighborhood (e.g. the backyard).
+    pub fn is_bens_house(&self, level: LevelId) -> bool {
+        let mut seen = vec![false; self.levels.len()];
+        let mut stack = vec![self.gun_spot.0];
+        while let Some(id) = stack.pop() {
+            if std::mem::replace(&mut seen[id], true) {
+                continue;
+            }
+            stack.extend(self.levels[id].doors.iter().map(|(_, l)| l.level).filter(|&l| !self.is_outdoor(l)));
+        }
+        seen[level]
     }
 
     fn from_json(json: &str) -> Result<Self, String> {
@@ -113,6 +151,7 @@ impl GameMaps {
                 doors: Vec::new(),
                 signs: Vec::new(),
                 npcs: Vec::new(),
+                rooms: Vec::new(),
             };
             for e in entities {
                 let ctx = |msg: String| format!("level `{}`, {} at {:?}: {msg}", level.identifier, e.kind, e.pos);
@@ -136,6 +175,13 @@ impl GameMaps {
                     }
                     "GunSpot" => gun_spots.push((id, e.pos)),
                     "AmbushEntry" => ambush_entries.push((id, e.pos)),
+                    // `pos` is the top-left tile; the game grid is Y-up, so
+                    // the rectangle extends down from it.
+                    "Room" => map.rooms.push(Room {
+                        name: Box::leak(e.field("name").map_err(ctx)?.to_owned().into_boxed_str()),
+                        min: GridPos::new(e.pos.x, e.pos.y - (e.size.1 - 1)),
+                        max: GridPos::new(e.pos.x + e.size.0 - 1, e.pos.y),
+                    }),
                     other => warn!("ldtk: ignoring unknown entity `{other}` in level `{}`", level.identifier),
                 }
             }
@@ -147,20 +193,15 @@ impl GameMaps {
             .position(|l| l.identifier == OUTDOOR_LEVEL)
             .ok_or_else(|| format!("missing level `{OUTDOOR_LEVEL}`"))?;
 
-        // Second pass: resolve door links. Scene changes are driven by the
-        // Outdoor/HouseInterior app states, so a door must connect the
-        // outdoor level with an indoor one.
+        // Second pass: resolve door links.
         for (from, pos, target) in unresolved_doors {
             let from_name = &levels[from].identifier;
             let target = target.ok_or_else(|| format!("level `{from_name}`: Door at {pos:?} has no destination"))?;
             let link = *spawn_points.get(&target).ok_or_else(|| {
                 format!("level `{from_name}`: Door at {pos:?} links to something that isn't a SpawnPoint")
             })?;
-            if (from == outdoor) == (link.level == outdoor) {
-                return Err(format!(
-                    "level `{from_name}`: Door at {pos:?} leads to `{}`; doors must connect `{OUTDOOR_LEVEL}` with an indoor level",
-                    levels[link.level].identifier
-                ));
+            if link.level == from {
+                return Err(format!("level `{from_name}`: Door at {pos:?} leads back into the same level"));
             }
             levels[from].doors.push((pos, link));
         }
@@ -190,6 +231,8 @@ struct EntityData {
     iid: String,
     pos: GridPos,
     fields: HashMap<String, Value>,
+    /// Width and height in tiles.
+    size: (i32, i32),
 }
 
 impl EntityData {
@@ -239,6 +282,7 @@ fn parse_level(level: &Level, tile_kinds: &HashMap<i64, TileKind>) -> Result<(Ti
             kind: e.identifier.clone(),
             iid: e.iid.clone(),
             pos: GridPos::new(e.grid[0], h - 1 - e.grid[1]),
+            size: (e.width / entity_layer.grid_size, e.height / entity_layer.grid_size),
             fields: e.field_instances.iter().map(|f| (f.identifier.clone(), f.value.clone())).collect(),
         })
         .collect();
@@ -329,6 +373,8 @@ struct EntityInstance {
     iid: String,
     #[serde(rename = "__grid")]
     grid: [i32; 2],
+    width: i32,
+    height: i32,
     field_instances: Vec<FieldInstance>,
 }
 
@@ -345,7 +391,7 @@ mod tests {
     use super::*;
 
     fn is_door_tile(kind: TileKind) -> bool {
-        matches!(kind, TileKind::DoorBen | TileKind::ExitDoor)
+        matches!(kind, TileKind::DoorBen | TileKind::ExitDoor | TileKind::SlidingDoor)
     }
 
     #[test]
@@ -361,8 +407,9 @@ mod tests {
         let walkable = |level: LevelId, p: GridPos| !maps.levels[level].grid.is_blocked(p.x, p.y);
 
         assert!(walkable(maps.outdoor, maps.player_start.0));
+        assert!(maps.levels[maps.outdoor].room_at(maps.player_start.0).is_some());
         let (gun_level, gun_pos) = maps.gun_spot;
-        assert_eq!(maps.levels[gun_level].grid.get(gun_pos.x, gun_pos.y), TileKind::FurnitureBedGun);
+        assert_eq!(maps.levels[gun_level].grid.get(gun_pos.x, gun_pos.y), TileKind::FurnitureBookcaseGun);
         assert!(walkable(gun_level, maps.ben_ambush_entry));
 
         for (id, level) in maps.levels.iter().enumerate() {
@@ -370,22 +417,51 @@ mod tests {
                 assert!(is_door_tile(level.grid.get(p.x, p.y)), "{}: door at {p:?} not on a door tile", level.identifier);
                 assert!(walkable(link.level, link.pos), "{}: door at {p:?} leads onto a blocked tile", level.identifier);
             }
+            // Stairs to levels that don't exist yet carry a sign instead of a door.
             for (p, _) in &level.signs {
-                assert_eq!(level.grid.get(p.x, p.y), TileKind::SignPost);
+                let kind = level.grid.get(p.x, p.y);
+                assert!(
+                    matches!(kind, TileKind::SignPost | TileKind::StairsUp | TileKind::StairsDown),
+                    "{}: sign at {p:?} on {kind:?}",
+                    level.identifier
+                );
             }
             for (p, _, _) in &level.npcs {
                 assert!(walkable(id, *p));
             }
+            // Wherever the player arrives, the room label has a name to show.
+            for (p, link) in &level.doors {
+                let target = &maps.levels[link.level];
+                assert!(target.room_at(link.pos).is_some(), "{}: door at {p:?} arrives outside any Room", level.identifier);
+            }
         }
     }
 
-    /// Every indoor level must be enterable from outside and have a way back out.
+    /// Every level must be reachable from the neighborhood through doors,
+    /// and every non-neighborhood level must have a way back out.
     #[test]
-    fn indoor_levels_are_connected() {
+    fn levels_are_connected() {
         let maps = GameMaps::from_json(PROJECT_JSON).unwrap();
-        for (id, level) in maps.levels.iter().enumerate().filter(|(id, _)| !maps.is_outdoor(*id)) {
-            assert!(maps.levels[maps.outdoor].doors.iter().any(|(_, l)| l.level == id), "no door into `{}`", level.identifier);
-            assert!(!level.doors.is_empty(), "no door out of `{}`", level.identifier);
+        let mut reached = vec![false; maps.levels.len()];
+        let mut stack = vec![maps.outdoor];
+        while let Some(id) = stack.pop() {
+            if !std::mem::replace(&mut reached[id], true) {
+                stack.extend(maps.levels[id].doors.iter().map(|(_, l)| l.level));
+            }
         }
+        for (id, level) in maps.levels.iter().enumerate() {
+            assert!(reached[id], "`{}` can't be reached from `{OUTDOOR_LEVEL}`", level.identifier);
+            assert!(maps.is_outdoor(id) || !level.doors.is_empty(), "no door out of `{}`", level.identifier);
+        }
+    }
+
+    #[test]
+    fn backyard_counts_as_bens_house() {
+        let maps = GameMaps::from_json(PROJECT_JSON).unwrap();
+        let level = |name: &str| maps.levels.iter().position(|l| l.identifier == name).unwrap();
+        assert!(maps.is_bens_house(level("HouseInterior")));
+        assert!(maps.is_bens_house(level("Backyard")));
+        assert!(!maps.is_bens_house(level("House2Interior")));
+        assert!(!maps.is_bens_house(maps.outdoor));
     }
 }
